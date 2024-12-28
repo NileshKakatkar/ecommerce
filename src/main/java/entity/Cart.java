@@ -19,16 +19,30 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cartID;
 
-    @ManyToMany
-    @Column(name="userID", nullable = false)
-    private Users user;
+   @ManyToOne
+   @JoinColumn(name="userId", nullable = false)
+   private Users user;
 
-    @ManyToMany
-    @Column(name="productID", nullable = false)
-    private Products product;
+   @ManyToOne
+   @JoinColumn(name="productId", nullable = false)
+   private Products product;
+
+   @Column(name="quantity", nullable = false)
+   private Integer quantity;
+
+   @Column(name="price", nullable = false)
+   private Double price;
 
     @Column(name="createAt",nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.price=calculatePrice();
+    }
 
+    public double calculatePrice(){
+        return quantity* product.getPrice();
+    }
 }
